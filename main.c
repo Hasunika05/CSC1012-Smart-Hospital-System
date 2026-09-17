@@ -41,6 +41,42 @@ double finalPayableAmounts [MAX_PATIENTS] = {0};
 
 int main()
 {
+    int choice = 0;
+    do{
+    printf("==================================\n");
+    printf("      SMART HOSPITAL SYSTEM\n");
+    printf("==================================\n");
+    printf("1. Register Patient\n");
+    printf("2. View Bed Status\n");
+    printf("3. Display Priority List\n");
+    printf("4. Generate Reports\n");
+    printf("5. Exit\n");
+
+    printf("Enter your choice: ");
+    scanf("%d",&choice);
+
+    switch (choice){
+        case 1:
+
+            break;
+        case 2:
+
+            break;
+        case 3:
+
+            break;
+        case 4:
+
+            break;
+        case 5:
+            printf("Exiting Smart Hospital System.\n");
+            break;
+        default:
+            printf("Invalid choice. Please try again.\n");
+    }
+
+    }while(choice != 5);
+
 
     return 0;
 }
