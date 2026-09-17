@@ -128,6 +128,21 @@ void registerPatient (){
         printf("Enter the number of days admitted: ");
         scanf("%d", &daysAdmitted[index]);
         }while(daysAdmitted[index]<1);
+        int wardIndex = wardIDs[index] - 1;
+
+        int bedfound = 0;
+        for(int i = 0; i < wardCapacities[wardIndex]; i++){
+            if (bedOccupancy[wardIndex][i] == 0){
+                bedOccupancy[wardIndex][i] = 1;
+                assignedBedNumbers[index] = i + 1;
+                bedfound = 1;
+                break;
+            }
+        }
+        if (bedfound == 0){
+            printf("No available beds in the selected ward.");
+            return;
+        }
 
     }
 
