@@ -59,7 +59,7 @@ int main()
 
     switch (choice){
         case 1:
-            registerPatient;
+            registerPatient ();
             break;
         case 2:
 
@@ -107,5 +107,31 @@ void registerPatient (){
         printf("Enter the Specialty ID (1 to 4): ");
         scanf("%d", &specialtyIDs[index]);
     }while(specialtyIDs[index] < 1 || specialtyIDs[index] > 4);
+    do{
+        printf("Is the patient admitted to a ward? (1 = Yes, 0 = No): ");
+        scanf("%d", &admissionStatus[index]);
+    }while(admissionStatus[index] != 0 && admissionStatus[index] != 1);
+    if(admissionStatus[index] == 0){
+        wardIDs[index] = 0;
+        daysAdmitted[index] = 0;
+        assignedBedNumbers[index] = 0;
+    }
+    if (admissionStatus[index] == 1){
+        for(int i = 0; i < 4; i++ ){
+            printf("%d. %s\n", i + 1, wardNames[i]);
+        }
+        do{
+        printf("Enter the ward ID (1 to 4): ");
+        scanf("%d", &wardIDs[index]);
+        }while(wardIDs[index]<1 || wardIDs[index]>4);
+        do{
+        printf("Enter the number of days admitted: ");
+        scanf("%d", &daysAdmitted[index]);
+        }while(daysAdmitted[index]<1);
+
+    }
+
+
+
 
 }
