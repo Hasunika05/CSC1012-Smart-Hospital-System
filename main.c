@@ -39,6 +39,8 @@ double grossTotals [MAX_PATIENTS] = {0};
 double discounts [MAX_PATIENTS] = {0};
 double finalPayableAmounts [MAX_PATIENTS] = {0};
 
+void registerPatient ();
+
 int main()
 {
     int choice = 0;
@@ -57,7 +59,7 @@ int main()
 
     switch (choice){
         case 1:
-
+            registerPatient;
             break;
         case 2:
 
@@ -79,4 +81,31 @@ int main()
 
 
     return 0;
+}
+
+void registerPatient (){
+
+    int index = patientCount;
+    if (index >= MAX_PATIENTS){
+        printf("Hospital registration limit reached.\n");
+        return;
+    }
+
+    printf("Enter the patient name: ");
+    scanf(" %49[^\n]", patientNames[index]);
+    printf("Enter the patient age: ");
+    scanf("%d", &patientAges[index]);
+    do{
+        printf("Enter the emergency level (1 = Normal, 2 = Urgent, 3 = Critical): ");
+        scanf("%d", &urgencyLevels[index]);
+    }while(urgencyLevels[index] < 1 || urgencyLevels[index] > 3);
+    do{
+        printf("1. General Practice (OPD)\n");
+        printf("2. Paediatrics\n");
+        printf("3. Cardiology\n");
+        printf("4. Neurology\n");
+        printf("Enter the Specialty ID (1 to 4): ");
+        scanf("%d", &specialtyIDs[index]);
+    }while(specialtyIDs[index] < 1 || specialtyIDs[index] > 4);
+
 }
