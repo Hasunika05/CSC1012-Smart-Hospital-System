@@ -107,6 +107,14 @@ void registerPatient (){
         printf("Enter the Specialty ID (1 to 4): ");
         scanf("%d", &specialtyIDs[index]);
     }while(specialtyIDs[index] < 1 || specialtyIDs[index] > 4);
+
+    int specialtyIndex = specialtyIDs[index] - 1;
+    if (specialtyQueueCounts[specialtyIndex] >= dailyPatientCaps[specialtyIndex]){
+        printf ("Daily patient limit reached for this specialty.\n");
+        return;
+    }
+
+
     do{
         printf("Is the patient admitted to a ward? (1 = Yes, 0 = No): ");
         scanf("%d", &admissionStatus[index]);
@@ -116,10 +124,11 @@ void registerPatient (){
         daysAdmitted[index] = 0;
         assignedBedNumbers[index] = 0;
     }
-    if (admissionStatus[index] == 1){
-        for(int i = 0; i < 4; i++ ){
+    else {
+        for(int i = 0; i < WARD_COUNT; i++ ){
             printf("%d. %s\n", i + 1, wardNames[i]);
         }
+
         do{
         printf("Enter the ward ID (1 to 4): ");
         scanf("%d", &wardIDs[index]);
@@ -140,13 +149,18 @@ void registerPatient (){
             }
         }
         if (bedfound == 0){
-            printf("No available beds in the selected ward.");
+            printf("No available beds in the selected ward.\n");
             return;
         }
 
+
     }
 
+    waitingTimes[index] = specialtyQueueCounts[specialtyIndex] * consultationTimes[specialtyIndex];
+    specialtyQueueCounts[specialtyIndex] = specialtyQueueCounts[specialtyIndex] + 1;
+    patientCount = patientCount + 1;
 
+    printf("Patient registered successfully.\n");
 
 
 }
