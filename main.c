@@ -45,6 +45,9 @@ double calculateEmergencySurcharge (double basefee, int urgency);
 double wardCost (int wardID, int noOfDays);
 double calculateDiscount (double grossTotals, int patientAge);
 void printPatientBill (int index);
+void viewBedStatus();
+void displayPriorityList();
+
 
 int main()
 {
@@ -67,10 +70,10 @@ int main()
             registerPatient ();
             break;
         case 2:
-
+            viewBedStatus();
             break;
         case 3:
-
+            void displayPriorityList();
             break;
         case 4:
 
@@ -321,4 +324,55 @@ void viewBedStatus(){
             }
         }
     }
+}
+
+void displayPriorityList(){
+    if (patientCount == 0){
+        printf("No patients registered.\n");
+        return;
+    }
+
+    int priorityOrder[MAX_PATIENTS];
+
+    for (int i = 0; i < patientCount; i++){
+        priorityOrder[i] = i;
+    }
+
+    for (int i = 0; i < patientCount - 1; i++){
+        for (int j = 0; j < patientCount - 1 - i; j++){
+            if (urgencyLevels[priorityOrder[j]] < urgencyLevels[priorityOrder[j + 1]]){
+                int temp = priorityOrder[j];
+                priorityOrder[j] = priorityOrder[j + 1];
+                priorityOrder[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\n===========================================\n");
+    printf("            PATIENT PRIORITY LIST\n");
+    printf("===========================================\n");
+
+    for (int i = 0; i < patientCount; i++){
+        int patientIndex = priorityOrder[i];
+
+        printf("PAT-%d  |  %s  |  ",
+               1001 + patientIndex,
+               patientNames[patientIndex]);
+
+        switch (urgencyLevels[patientIndex]){
+            case 1:
+                printf("Level 1 - Normal\n");
+                break;
+
+            case 2:
+                printf("Level 2 - Urgent\n");
+                break;
+
+            case 3:
+                printf("Level 3 - Critical\n");
+                break;
+        }
+    }
+
+    printf("===========================================\n");
 }
