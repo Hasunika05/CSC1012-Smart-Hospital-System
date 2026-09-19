@@ -23,6 +23,7 @@ int specialtyQueueCounts [SPECIALTY_COUNT] = {0};
 int patientCount = 0;
 
 char patientNames [MAX_PATIENTS][50] = {0};
+char patientGender [MAX_PATIENTS] = {0};
 int patientAges [MAX_PATIENTS] = {0};
 int urgencyLevels [MAX_PATIENTS] = {0};
 int specialtyIDs [MAX_PATIENTS] = {0};
@@ -43,6 +44,7 @@ void registerPatient ();
 double calculateEmergencySurcharge (double basefee, int urgency);
 double wardCost (int wardID, int noOfDays);
 double calculateDiscount (double grossTotals, int patientAge);
+void printPatientBill (int index);
 
 int main()
 {
@@ -93,9 +95,12 @@ void registerPatient (){
         printf("Hospital registration limit reached.\n");
         return;
     }
-
     printf("Enter the patient name: ");
     scanf(" %49[^\n]", patientNames[index]);
+    do{
+        printf("Enter the gender (M - male, F - female): ");
+        scanf(" %c", patientGender[index]);
+    }while (patientGender[index] == "M" || patientGender[index] == "F");
     printf("Enter the patient age: ");
     scanf("%d", &patientAges[index]);
     do{
@@ -168,6 +173,7 @@ void registerPatient (){
     grossTotals[index] = specialtyFees[specialtyIndex] + emergencySurcharges[index] + wardStayCosts[index];
     discounts[index] = calculateDiscount(grossTotals[index],patientAges[index]);
     finalPayableAmounts[index] = grossTotals[index] - discounts[index];
+    printPatientBill (index);
 
     patientCount = patientCount + 1;
 
@@ -212,6 +218,91 @@ double calculateDiscount (double grossTotal, int patientAge){
     else{
         return 0;
     }
+
+
+}
+
+void printPatientBill (int index){
+
+    int specialtyIndex = specialtyIDs[index];
+    int wardIndex = -1;
+
+    if(admissionStatus[index]== 1){
+        wardIndex = wardIDs[index] - 1;
+    }
+    printf("===========================================\n");
+    printf("      SMART HOSPITAL ADMISSION & BILL\n");
+    printf("-------------------------------------------\n");
+    printf("Patient ID               : PAT-%d\n",1001 + patientCount);
+    if(patientGender[index] == "M"){
+        printf("Patient Name             : Mr. %s\n", patientNames[index]);
+    }
+    else {
+        printf("Patient Name             : Miss. %s\n", patientNames[index]);
+    }
+    if(patientAges[index] <5 || patientAges[index] >65){
+        printf("Age                      : %d Years (15% Subsidy Eligible)\n",patientAges[index]);
+    }
+    else{
+        printf("Age                      : %d Years \n",patientAges[index]);
+    }
+    switch(specialtyIDs[index]){
+        case 1:
+            printf("Speciality               : General Practice (OPD)\n");
+            break;
+        case 2:
+            printf("Speciality               : Paediatrics\n");
+            break;
+        case 3:
+            printf("Speciality               : Cardiology\n");
+            break;
+        case 4:
+            printf("Speciality               : Neurology\n");
+            break;
+    }
+    switch(wardIDs[index]){
+        case 1:
+            printf("Assigned Ward            : General Ward (Bed #%02d)\n", assignedBedNumbers[index]);
+            break;
+        case 2:
+            printf("Assigned Ward            : Paediatric Ward (Bed #%02d)\n", assignedBedNumbers[index]);
+            break;
+        case 3:
+            printf("Assigned Ward            : Surgical Ward (Bed #%02d)\n", assignedBedNumbers[index]);
+            break;
+        case 4:
+            printf("Assigned Ward            : ICU (Bed #%02d)\n", assignedBedNumbers[index]);
+            break;
+        default:
+            printf("Not admitted.\n");
+    }
+    switch(urgencyLevels[index]){
+        case 1:
+            printf("Urgency Level            : Level 1(Normal)\n");
+            break;
+        case 2:
+            printf("Urgency Level            : Level 2(Urgent)\n");
+            break;
+        case 3:
+            printf("Urgency Level            : Level 3(Critical)\n");
+            break;
+    }
+    printf("-------------------------------------------\n");
+    printf("Base Consultation Fee    : LKR %.2f", specialtyFees[specialtyIndex]);
+    switch (urgencyLevels[index]){
+        case 1 :
+            printf("Emergency Surcharge      : LKR %.2f \n", emergencySurcharges[index]);
+            break;
+        case 2 :
+            printf("Emergency Surcharge      : LKR %.2f (20%)\n", emergencySurcharges[index]);
+            break;
+        case 3 :
+            printf("Emergency Surcharge      : LKR %.2f (50%)\n", emergencySurcharges[index]);
+            break;
+    }
+    printf("Ward Stay Cost (%d Days) : LKR %.2f\n", daysAdmitted[index], wardStayCosts[index]);
+    printf("-------------------------------------------\n");
+
 
 
 }
