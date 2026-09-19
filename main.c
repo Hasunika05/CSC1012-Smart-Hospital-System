@@ -99,8 +99,8 @@ void registerPatient (){
     scanf(" %49[^\n]", patientNames[index]);
     do{
         printf("Enter the gender (M - male, F - female): ");
-        scanf(" %c", patientGender[index]);
-    }while (patientGender[index] == "M" || patientGender[index] == "F");
+        scanf(" %c", &patientGender[index]);
+    }while (patientGender[index] != 'M' && patientGender[index] != 'F');
     printf("Enter the patient age: ");
     scanf("%d", &patientAges[index]);
     do{
@@ -224,24 +224,20 @@ double calculateDiscount (double grossTotal, int patientAge){
 
 void printPatientBill (int index){
 
-    int specialtyIndex = specialtyIDs[index];
-    int wardIndex = -1;
+    int specialtyIndex = specialtyIDs[index] - 1;
 
-    if(admissionStatus[index]== 1){
-        wardIndex = wardIDs[index] - 1;
-    }
     printf("===========================================\n");
     printf("      SMART HOSPITAL ADMISSION & BILL\n");
     printf("-------------------------------------------\n");
-    printf("Patient ID               : PAT-%d\n",1001 + patientCount);
-    if(patientGender[index] == "M"){
+    printf("Patient ID               : PAT-%d\n",1001 + index);
+    if(patientGender[index] == 'M'){
         printf("Patient Name             : Mr. %s\n", patientNames[index]);
     }
     else {
         printf("Patient Name             : Miss. %s\n", patientNames[index]);
     }
     if(patientAges[index] <5 || patientAges[index] >65){
-        printf("Age                      : %d Years (15% Subsidy Eligible)\n",patientAges[index]);
+        printf("Age                      : %d Years (15%% Subsidy Eligible)\n",patientAges[index]);
     }
     else{
         printf("Age                      : %d Years \n",patientAges[index]);
@@ -288,21 +284,26 @@ void printPatientBill (int index){
             break;
     }
     printf("-------------------------------------------\n");
-    printf("Base Consultation Fee    : LKR %.2f", specialtyFees[specialtyIndex]);
+    printf("Base Consultation Fee    : LKR %.2f\n", specialtyFees[specialtyIndex]);
     switch (urgencyLevels[index]){
         case 1 :
             printf("Emergency Surcharge      : LKR %.2f \n", emergencySurcharges[index]);
             break;
         case 2 :
-            printf("Emergency Surcharge      : LKR %.2f (20%)\n", emergencySurcharges[index]);
+            printf("Emergency Surcharge      : LKR %.2f (20%%)\n", emergencySurcharges[index]);
             break;
         case 3 :
-            printf("Emergency Surcharge      : LKR %.2f (50%)\n", emergencySurcharges[index]);
+            printf("Emergency Surcharge      : LKR %.2f (50%%)\n", emergencySurcharges[index]);
             break;
     }
     printf("Ward Stay Cost (%d Days) : LKR %.2f\n", daysAdmitted[index], wardStayCosts[index]);
     printf("-------------------------------------------\n");
-
+    printf("Gross Total Bill         : LKR %.2f\n", grossTotals[index]);
+    printf("Age Subsidy Discount     : LKR %.2f\n", discounts[index]);
+    printf("-------------------------------------------\n");
+    printf("Final Payable Amount     : LKR %.2f\n", finalPayableAmounts[index]);
+    printf("Estimated Waiting Time   : %d mins\n", waitingTimes[index]);
+    printf("===========================================\n");
 
 
 }
