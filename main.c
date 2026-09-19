@@ -305,5 +305,20 @@ void printPatientBill (int index){
     printf("Estimated Waiting Time   : %d mins\n", waitingTimes[index]);
     printf("===========================================\n");
 
+}
 
+void viewBedStatus(){
+
+    for (int i = 0; i < WARD_COUNT; i++){
+        printf("\n%s\n", wardNames[i]);
+
+        for (int j = 0; j < wardCapacities[i]; j++){
+            if (bedOccupancy[i][j] == 0){
+            printf("Bed %02d  :  Available\n", j + 1);
+            }
+            else {
+            printf("Bed %02d  :  Occupied\n", j + 1);
+            }
+        }
+    }
 }
