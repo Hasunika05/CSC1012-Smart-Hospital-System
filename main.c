@@ -40,6 +40,9 @@ double discounts [MAX_PATIENTS] = {0};
 double finalPayableAmounts [MAX_PATIENTS] = {0};
 
 void registerPatient ();
+double calculateEmergencySurcharge (double basefee, int urgency);
+double wardCost (int wardID, int noOfDays);
+double calculateDiscount (double grossTotals, int patientAge);
 
 int main()
 {
@@ -132,7 +135,7 @@ void registerPatient (){
         do{
         printf("Enter the ward ID (1 to 4): ");
         scanf("%d", &wardIDs[index]);
-        }while(wardIDs[index]<1 || wardIDs[index]>4);
+        }while(wardIDs[index] < 1 || wardIDs[index] > WARD_COUNT);
         do{
         printf("Enter the number of days admitted: ");
         scanf("%d", &daysAdmitted[index]);
@@ -158,9 +161,57 @@ void registerPatient (){
 
     waitingTimes[index] = specialtyQueueCounts[specialtyIndex] * consultationTimes[specialtyIndex];
     specialtyQueueCounts[specialtyIndex] = specialtyQueueCounts[specialtyIndex] + 1;
+
+    emergencySurcharges[index] = calculateEmergencySurcharge (specialtyFees[specialtyIndex],urgencyLevels[index]);
+    wardStayCosts[index] = wardCost(wardIDs[index],daysAdmitted[index]);
+
+    grossTotals[index] = specialtyFees[specialtyIndex] + emergencySurcharges[index] + wardStayCosts[index];
+    discounts[index] = calculateDiscount(grossTotals[index],patientAges[index]);
+    finalPayableAmounts[index] = grossTotals[index] - discounts[index];
+
     patientCount = patientCount + 1;
 
     printf("Patient registered successfully.\n");
+
+}
+
+double calculateEmergencySurcharge (double basefee, int urgency){
+    double surcharge = 0;
+    switch (urgency){
+
+        case 1 :
+            surcharge = 0;
+            break;
+        case 2 :
+            surcharge = basefee * (0.20);
+            break;
+        case 3 :
+            surcharge = basefee * (0.50);
+            break;
+    }
+    return surcharge;
+}
+
+double wardCost (int wardID, int noOfDays){
+
+    if (wardID == 0){
+        return 0;
+    }
+    else{
+        int wardIndex = wardID - 1;
+        return wardRates[wardIndex] * noOfDays;
+    }
+
+}
+
+double calculateDiscount (double grossTotal, int patientAge){
+
+    if(patientAge <5 || patientAge >65){
+        return grossTotal * 0.15;
+    }
+    else{
+        return 0;
+    }
 
 
 }
