@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 #define SPECIALTY_COUNT 4
 #define WARD_COUNT 4
 #define MAX_BEDS 20
@@ -19,7 +20,7 @@ const int wardCapacities[WARD_COUNT] = {20, 10, 10, 5};
 int bedOccupancy [WARD_COUNT][MAX_BEDS] = {0};
 
 int specialtyQueueCounts [SPECIALTY_COUNT] = {0};
-
+//Number of patients registered
 int patientCount = 0;
 
 char patientNames [MAX_PATIENTS][50] = {0};
@@ -39,7 +40,7 @@ double wardStayCosts [MAX_PATIENTS] = {0};
 double grossTotals [MAX_PATIENTS] = {0};
 double discounts [MAX_PATIENTS] = {0};
 double finalPayableAmounts [MAX_PATIENTS] = {0};
-
+//Function prototypes
 void registerPatient ();
 double calculateEmergencySurcharge (double basefee, int urgency);
 double wardCost (int wardID, int noOfDays);
@@ -57,7 +58,7 @@ void loadBedStatus();
 void appendPatientRecord(int index);
 void loadNextPatientID();
 void saveNextPatientID();
-
+// main function
 int main()
 {
     loadBedStatus();
@@ -75,7 +76,7 @@ int main()
 
     printf("Enter your choice: ");
     scanf("%d",&choice);
-
+//creating menu driven system
     switch (choice){
         case 1:
             registerPatient ();
@@ -101,7 +102,7 @@ int main()
 
     return 0;
 }
-
+//Function to register patients
 void registerPatient (){
 
     int index = patientCount;
@@ -201,7 +202,7 @@ void registerPatient (){
     printf("Patient registered successfully.\n");
 
 }
-
+//Calculating emergency surcharge
 double calculateEmergencySurcharge (double basefee, int urgency){
     double surcharge = 0;
     switch (urgency){
@@ -218,7 +219,7 @@ double calculateEmergencySurcharge (double basefee, int urgency){
     }
     return surcharge;
 }
-
+//Calculating ward cost
 double wardCost (int wardID, int noOfDays){
 
     if (wardID == 0){
@@ -230,7 +231,7 @@ double wardCost (int wardID, int noOfDays){
     }
 
 }
-
+//calculating discount
 double calculateDiscount (double grossTotal, int patientAge){
 
     if(patientAge <5 || patientAge >65){
@@ -240,7 +241,7 @@ double calculateDiscount (double grossTotal, int patientAge){
         return 0;
     }
 }
-
+//printing the bill function
 void printPatientBill (int index){
 
     int specialtyIndex = specialtyIDs[index] - 1;
@@ -330,7 +331,7 @@ void printPatientBill (int index){
     printf("===========================================\n");
 
 }
-
+//Bed status function
 void viewBedStatus(){
 
     for (int i = 0; i < WARD_COUNT; i++){
@@ -346,7 +347,7 @@ void viewBedStatus(){
         }
     }
 }
-
+//Displaying the priority list function
 void displayPriorityList(){
     if (patientCount == 0){
         printf("No patients registered.\n");
@@ -395,7 +396,7 @@ void displayPriorityList(){
 
     printf("===========================================\n");
 }
-
+//Generating reports function
 void generateReports(){
 
     if (patientCount == 0){
@@ -477,7 +478,7 @@ void generateReports(){
     printf("===========================================\n");
 
 }
-
+// File Handling
 void saveBedStatus(){
     FILE *file;
     file = fopen("beds_status.txt", "w");
