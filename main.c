@@ -7,7 +7,7 @@
 #define MAX_BEDS 20
 #define MAX_PATIENTS 72
 
-const char specialtyNames [SPECIALTY_COUNT][30] = {"General Practice(OPD)", "Paediatrics", "Cardiology", "Neurology"};
+const char specialtyNames [SPECIALTY_COUNT][30] = {"General Practice (OPD)", "Paediatrics", "Cardiology", "Neurology"};
 const double specialtyFees [SPECIALTY_COUNT] = {1500.00, 2500.00, 4500.00, 5000.00};
 const int consultationTimes [SPECIALTY_COUNT] = {15, 20, 30, 30};
 const int dailyPatientCaps [SPECIALTY_COUNT] = {30, 20, 12, 10};
@@ -49,9 +49,19 @@ void viewBedStatus();
 void displayPriorityList();
 void generateReports();
 
+int patientIDs[MAX_PATIENTS] = {0};
+int nextPatientID = 1001;
+
+void saveBedStatus();
+void loadBedStatus();
+void appendPatientRecord(int index);
+void loadNextPatientID();
+void saveNextPatientID();
 
 int main()
 {
+    loadBedStatus();
+    loadNextPatientID();
     int choice = 0;
     do{
     printf("==================================\n");
@@ -77,7 +87,7 @@ int main()
             displayPriorityList();
             break;
         case 4:
-            void generateReports();
+            generateReports();
             break;
         case 5:
             printf("Exiting Smart Hospital System.\n");
@@ -177,7 +187,14 @@ void registerPatient (){
     grossTotals[index] = specialtyFees[specialtyIndex] + emergencySurcharges[index] + wardStayCosts[index];
     discounts[index] = calculateDiscount(grossTotals[index],patientAges[index]);
     finalPayableAmounts[index] = grossTotals[index] - discounts[index];
+    patientIDs[index] = nextPatientID;
+    nextPatientID = nextPatientID + 1;
+    saveNextPatientID();
+
     printPatientBill (index);
+
+    appendPatientRecord(index);
+    saveBedStatus();
 
     patientCount = patientCount + 1;
 
@@ -231,7 +248,7 @@ void printPatientBill (int index){
     printf("===========================================\n");
     printf("      SMART HOSPITAL ADMISSION & BILL\n");
     printf("-------------------------------------------\n");
-    printf("Patient ID               : PAT-%d\n",1001 + index);
+    printf("Patient ID : PAT-%d\n", patientIDs[index]);
     if(patientGender[index] == 'M'){
         printf("Patient Name             : Mr. %s\n", patientNames[index]);
     }
@@ -272,7 +289,7 @@ void printPatientBill (int index){
             printf("Assigned Ward            : ICU (Bed #%02d)\n", assignedBedNumbers[index]);
             break;
         default:
-            printf("Not admitted.\n");
+            printf("Assigned Ward            : Not admitted.\n");
     }
     switch(urgencyLevels[index]){
         case 1:
@@ -298,13 +315,18 @@ void printPatientBill (int index){
             printf("Emergency Surcharge      : LKR %.2f (50%%)\n", emergencySurcharges[index]);
             break;
     }
-    printf("Ward Stay Cost (%d Days) : LKR %.2f\n", daysAdmitted[index], wardStayCosts[index]);
+    printf("Ward Stay Cost (%d Days)  : LKR %.2f\n", daysAdmitted[index], wardStayCosts[index]);
     printf("-------------------------------------------\n");
     printf("Gross Total Bill         : LKR %.2f\n", grossTotals[index]);
-    printf("Age Subsidy Discount     : LKR %.2f\n", discounts[index]);
+    printf("Age Subsidy Discount     : LKR -%.2f\n", discounts[index]);
     printf("-------------------------------------------\n");
     printf("Final Payable Amount     : LKR %.2f\n", finalPayableAmounts[index]);
-    printf("Estimated Waiting Time   : %d mins\n", waitingTimes[index]);
+    if (waitingTimes[index] == 0){
+        printf("Estimated Waiting Time   : %.2f mins (Immediate Attention)\n",(double)waitingTimes[index]);
+    }
+    else{
+        printf("Estimated Waiting Time   : %.2f mins\n", (double)waitingTimes[index]);
+    }
     printf("===========================================\n");
 
 }
@@ -354,9 +376,7 @@ void displayPriorityList(){
     for (int i = 0; i < patientCount; i++){
         int patientIndex = priorityOrder[i];
 
-        printf("PAT-%d  |  %s  |  ",
-               1001 + patientIndex,
-               patientNames[patientIndex]);
+        printf("PAT-%d  |  %s  |  ",patientIDs[patientIndex],patientNames[patientIndex]);
 
         switch (urgencyLevels[patientIndex]){
             case 1:
@@ -456,4 +476,103 @@ void generateReports(){
 
     printf("===========================================\n");
 
+}
+
+void saveBedStatus(){
+    FILE *file;
+    file = fopen("beds_status.txt", "w");
+
+    if (file == NULL){
+        printf("Error opening beds_status.txt.\n");
+        return;
+    }
+
+    for (int i = 0; i < WARD_COUNT; i++){
+        for (int j = 0; j < wardCapacities[i]; j++){
+            fprintf(file, "%d ", bedOccupancy[i][j]);
+        }
+        fprintf(file, "\n");
+    }
+    fclose(file);
+}
+
+void loadBedStatus(){
+    FILE *file;
+    file = fopen("beds_status.txt", "r");
+
+    if (file == NULL){
+        return;
+    }
+
+    for (int i = 0; i < WARD_COUNT; i++){
+        for (int j = 0; j < wardCapacities[i]; j++){
+            fscanf(file, "%d", &bedOccupancy[i][j]);
+        }
+    }
+    fclose(file);
+}
+
+void appendPatientRecord(int index){
+    FILE *file;
+
+    file = fopen("patient_records.txt", "a");
+
+    if (file == NULL){
+        printf("Error opening patient_records.txt.\n");
+        return;
+    }
+
+    int specialtyIndex = specialtyIDs[index] - 1;
+
+    fprintf(file, "===========================================\n");
+    fprintf(file, "Patient ID: PAT-%d\n", patientIDs[index]);
+    fprintf(file, "Patient Name: %s\n", patientNames[index]);
+    fprintf(file, "Age: %d\n", patientAges[index]);
+    fprintf(file, "Specialty: %s\n", specialtyNames[specialtyIndex]);
+    fprintf(file, "Urgency Level: %d\n", urgencyLevels[index]);
+
+    if (admissionStatus[index] == 1){
+        int wardIndex = wardIDs[index] - 1;
+
+        fprintf(file, "Ward: %s\n", wardNames[wardIndex]);
+        fprintf(file, "Bed Number: %d\n", assignedBedNumbers[index]);
+        fprintf(file, "Days Admitted: %d\n", daysAdmitted[index]);
+    }
+    else{
+        fprintf(file, "Ward: Not Admitted\n");
+    }
+    fprintf(file, "Base Consultation Fee: %.2f\n",specialtyFees[specialtyIndex]);
+    fprintf(file, "Emergency Surcharge: %.2f\n",emergencySurcharges[index]);
+    fprintf(file, "Ward Stay Cost: %.2f\n",wardStayCosts[index]);
+    fprintf(file, "Gross Total: %.2f\n",grossTotals[index]);
+    fprintf(file, "Discount: %.2f\n",discounts[index]);
+    fprintf(file, "Final Payable Amount: %.2f\n",finalPayableAmounts[index]);
+    fprintf(file, "Estimated Waiting Time: %d mins\n",waitingTimes[index]);
+    fprintf(file, "===========================================\n\n");
+    fclose(file);
+}
+
+void loadNextPatientID(){
+    FILE *file;
+    file = fopen("next_patient_id.txt", "r");
+
+    if (file == NULL){
+        nextPatientID = 1001;
+        return;
+    }
+    fscanf(file, "%d", &nextPatientID);
+
+    fclose(file);
+}
+
+void saveNextPatientID(){
+    FILE *file;
+    file = fopen("next_patient_id.txt", "w");
+
+    if (file == NULL){
+        return;
+    }
+    fprintf(file, "%d", nextPatientID);
+
+    fclose(file);
 }

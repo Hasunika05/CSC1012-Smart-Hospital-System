@@ -1,0 +1,36 @@
+===========================================
+Patient ID: PAT-1001
+Patient Name: Chappu
+Age: 21
+Specialty: Paediatrics
+Urgency Level: 2
+Ward: Paediatric Ward
+Bed Number: 1
+Days Admitted: 3
+Base Consultation Fee: 2500.00
+Emergency Surcharge: 500.00
+Ward Stay Cost: 18000.00
+Gross Total: 21000.00
+Discount: 0.00
+Final Payable Amount: 21000.00
+Estimated Waiting Time: 0 mins
+===========================================
+
+===========================================
+Patient ID: PAT-1002
+Patient Name: Hachu
+Age: 21
+Specialty: General Practice (OPD)
+Urgency Level: 1
+Ward: Paediatric Ward
+Bed Number: 2
+Days Admitted: 4
+Base Consultation Fee: 1500.00
+Emergency Surcharge: 0.00
+Ward Stay Cost: 24000.00
+Gross Total: 25500.00
+Discount: 0.00
+Final Payable Amount: 25500.00
+Estimated Waiting Time: 0 mins
+===========================================
+
